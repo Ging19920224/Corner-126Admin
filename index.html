@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="images/Corner-126_IconLogo.png">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="fontawesome-free-5.7.1-web/css/all.min.css">
+    <link rel="stylesheet" href="css/login.css">
+    <title>轉角126 後台管理系統 | 登入</title>
+</head>
+<body>
+    <section class="login-mask">
+        <div class="login">
+            <div class="login-up">
+                <img src="./images/Corner-126_NavLogo.png" alt="轉角126logo">
+                <h1>轉角-126</h1> 
+                <h1>後台管理系統</h1>
+            </div>
+            <div class="login-down">
+                <div class="login-input">
+                    <i class="fas fa-user-shield" id="account"></i>
+                    <input type="text" placeholder="帳號" name="account" id="ad-input" class="input-style" autocomplete="off" pattern="[a-zA-Z0-9]{8,16}" title="格式為大或小寫英數，不含特殊字元" required>
+                </div>
+                <div class="login-input">
+                    <i class="fas fa-key" id="password"></i>
+                    <input type="password" placeholder="密碼" name="password" id="psd-input"  class="input-style" pattern="[a-zA-Z0-9]{8,16}"  title="格式為大或小寫英數，不含特殊字元" required>
+                </div>
+                <button class="login-button" type="submit">Enter<i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+    <section class="loading">
+        <div class="loading-mask"></div>
+    </section>
+    <footer>
+        <p class="mt-45">Copyright © Corner126 Designed by Ging</p>
+    </footer>
+    <script src="./script/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            /***AJAX串接PHP驗證***/
+            $(".login-button").on("click",function(){
+                sendData();
+            })
+            function sendData(){
+                var data = {
+                    account: $("#ad-input").val(),
+                    password: $("#psd-input").val()
+                }
+                var ajaxPhp = $.ajax({
+                    url: "login.php",
+                    contentType: false,
+                    dataType: 'json',
+                    processData: false,
+                    data: JSON.stringify(data),
+                    method: "POST"
+                })
+
+                ajaxPhp.done(function(msg){
+                    var checkMsg = msg.result;
+                    if(checkMsg == "0"){
+                        alert("帳號輸入錯誤");
+                    }else if(checkMsg == "1"){
+                        alert("密碼輸入錯誤");
+                    }else{
+                        document.location.href = checkMsg;
+                    }
+                }).fail(function(xhr, status, err){
+                    console.log("failed");
+                })
+            }
+
+            /***Loading***/
+            $(".loading-mask").css("transform","rotateY(180deg)");
+            setTimeout(rotateZ,1100);
+            setTimeout(loadingDisappear,2100);
+            function rotateZ(){
+                $(".loading-mask").css("transform","rotateZ(180deg)");
+            }
+            function loadingDisappear(){
+                $(".loading").animate({opacity: "0"}, 1000).animate({"z-index": "-2"}, 500);
+            }
+
+            var account = $("#ad-input");
+            var password = $("#psd-input");
+            inputColor(account);
+            inputColor(password);
+        });
+
+        function inputColor(target){
+            $(target).on("focus",function(){
+                var parent = $(target).parent("div");
+                var ID = parent.find("i").attr("id");
+                var iconID = "#" + ID;
+                $(iconID).css("color","rgb(9, 230, 108)");
+            });
+            $(target).on("focusout",function(){
+                var parent = $(target).parent("div");
+                var ID = parent.find("i").attr("id");
+                var iconID = "#" + ID;
+                $(iconID).css("color","#fff");
+            })
+        }
+    </script>
+</body>
+</html>
